@@ -120,9 +120,20 @@ def query_documents(
     # - Too many (k=8+): fills the LLM's context window with noise, dilutes relevance
     # - k=4 is a reliable default for most document Q&A use cases
     #
-    # The returned Documents have both page_content (the text) AND metadata
-    # (source filename, page number) — the attribution system relies on this.
-    source_docs = vector_store.similarity_search(query, k=4)
+    # Context-aware search: if there is chat history, we enrich the search query
+    # with the last exchange so FAISS retrieves chunks relevant to the full
+    # conversation — not just the isolated new question in isolation.
+    # Example: Q4 asked about "trust", Q5 asks about "decentralised healthcare".
+    # Without enrichment, FAISS searches only "decentralised healthcare" and finds
+    # nothing. With enrichment, it searches the trust context + new question together
+    # and correctly retrieves relevant chunks from both documents.
+    if chat_history:
+        last_human, last_ai = chat_history[-1]
+        enriched_query = f"{last_human} {last_ai[:200]} {query}"
+    else:
+        enriched_query = query
+
+    source_docs = vector_store.similarity_search(enriched_query, k=4)
 
     # ── Build Context String ──────────────────────────────────────────────────
     #
@@ -158,13 +169,15 @@ def query_documents(
     # Key instruction: "based ONLY on the provided context"
     # Without this, the LLM might answer from its training data instead of
     # the uploaded documents — that would be wrong and non-attributable.
-    system_message = """You are a precise document analyst. Your job is to answer questions using ONLY the information provided in the document context below.
+    system_message = """You are an intelligent document analyst. Answer questions using the provided document context as your primary source.
 
 Rules:
-- Answer based exclusively on the provided context
-- If the answer is not in the documents, say "I couldn't find that in the uploaded documents"
-- Be concise and accurate
-- Do NOT add information from outside the documents"""
+- Base your answers on the provided document context
+- You may reason, infer, and synthesise across multiple documents
+- If a question asks you to recommend or compare, use evidence from the documents to support your reasoning even if the exact answer is not explicitly stated
+- Only say you cannot find something if the documents contain absolutely no relevant information on the topic
+- Be analytical, not just a search engine — draw conclusions from what the documents contain
+- When referencing previous conversation, build on it naturally"""
 
     user_message = f"""Document Context:
 {context}
