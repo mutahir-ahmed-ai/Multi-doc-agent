@@ -1,6 +1,6 @@
 import fitz  # PyMuPDF — already in your stack from Project 4
-from langchain.schema import Document
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_core.documents import Document
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 # ──────────────────────────────────────────────────────────────────────────────
 # WHY THIS FILE EXISTS
