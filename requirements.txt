@@ -1,40 +1,9 @@
-# ── Core LangChain packages ───────────────────────────────────────────────────
-# langchain: the main framework — provides Document, TextSplitter, etc.
-langchain>=0.2.0
-
-# langchain-core: foundational types shared across all LangChain packages
-langchain-core>=0.2.0
-
-# langchain-community: contains the FAISS vectorstore wrapper
-# (from langchain_community.vectorstores import FAISS)
-langchain-community>=0.2.0
-
-# langchain-huggingface: official HuggingFace integration
-# (from langchain_huggingface import HuggingFaceEmbeddings)
-# This is the current recommended package — langchain-community's version is deprecated
-langchain-huggingface>=0.0.3
-
-# ── Vector Search ─────────────────────────────────────────────────────────────
-# faiss-cpu: Facebook AI Similarity Search — the vector database
-# We use the CPU version because Streamlit Cloud has no GPU
-# faiss-gpu would fail on deployment
+crewai==0.28.8
+langchain==0.1.20
+langchain-core==0.1.52
+langchain-community==0.0.38
+langchain-groq==0.0.1
 faiss-cpu>=1.7.4
-
-# ── Embeddings Model ──────────────────────────────────────────────────────────
-# sentence-transformers: provides the all-MiniLM-L6-v2 model
-# This downloads ~80 MB from HuggingFace on first run
 sentence-transformers>=2.2.0
-
-# ── LLM Provider ──────────────────────────────────────────────────────────────
-# groq: official Groq Python client — used for streaming Llama 3.3 70B responses
 groq>=0.9.0
-
-# ── PDF Processing ────────────────────────────────────────────────────────────
-# PyMuPDF: reads PDF bytes and extracts text page by page
-# Same library you used in Project 4 (imported as 'fitz')
-PyMuPDF>=1.23.0
-
-# ── UI ────────────────────────────────────────────────────────────────────────
 streamlit>=1.32.0
-
-langchain-text-splitters>=0.2.0
