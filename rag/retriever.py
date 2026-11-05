@@ -200,7 +200,7 @@ Answer using only the document context above:"""
     # Each iteration returns a chunk with chunk.choices[0].delta.content
     # which is a small piece of text (sometimes a word, sometimes a token).
     stream = groq_client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
+        model="openai/gpt-oss-120b",
         messages=[
             {"role": "system", "content": system_message},
             {"role": "user", "content": user_message}
